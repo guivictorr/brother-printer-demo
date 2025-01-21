@@ -37,7 +37,7 @@
 			const printers = await tag.print(data, options);
 			console.log({ printers });
 		} catch (error) {
-			status.innerText = `ERROR: ${error.message}\n\nPara mais informações olhe o console`;
+			status.innerText = `ERROR: ${error}\n\nPara mais informações olhe o console`;
 			console.log({ error });
 		}
 	};
