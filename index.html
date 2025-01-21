@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>HTML + CSS</title>
+		<link rel="stylesheet" href="styles.css" />
+	</head>
+	<body>
+		<h1>Impressora maluca (abra o console)</h1>
+		<button>Imprimir</button>
+		<p id="status">Aguardando impressão</p>
+	</body>
+	<script type="module">
+	const printersButton = document.querySelector("button");
+	const status=  document.querySelector('#status')
+	import BrotherSdk from "https://cdn.jsdelivr.net/npm/bpac-js@latest/dist/index.js";
+	const tag = new BrotherSdk({
+		templatePath: "C:/Downloads/teste.lbx",
+		exportPath: "",
+		printer: "Brother QL-820NWB",
+	});
+	const data = {
+		nome_participante: "John Doe",
+		empresa: "Doe's Company",
+	};
+	const options = {
+		copies: 1,
+		printName: "Ingresso",
+		highResolution: true,
+	};
+	const getPrinters = async () => {
+		status.innerText = ''
+		try {
+			status.innerText = 'Imprimindo'
+			const printers = await tag.print(data, options);
+			console.log({ printers });
+		} catch (error) {
+			status.innerText = `ERROR: ${error.message}\n\nPara mais informações olhe o console`;
+			console.log({ error });
+		}
+	};
+	printersButton.addEventListener("click", getPrinters);
+	</script>
+</html>
