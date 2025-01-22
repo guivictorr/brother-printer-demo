@@ -22,10 +22,11 @@
     const tag = new BrotherSdk({
       templatePath: "C:/Users/AnaMariadeLucca/Downloads/teste.lbx",
       exportPath: "",
+      printer: "Brother QL-820NWB (Copiar 1)",
     });
     const data = {
-      nome_participante: "John Doe",
-      empresa: "Doe's Company",
+      nome_participante: "Ana",
+      empresa: "Pecegitos",
     };
     const getPrinters = async () => {
       try {
@@ -41,7 +42,9 @@
       status.innerText = "";
       try {
         status.innerText = "Imprimindo";
-        const printers = await tag.print(data);
+        const printers = await tag.print(data, {
+          printName: "Ingresso maluco",
+        });
         console.log({ printers });
         status.innerText = "Impressão concluída";
       } catch (error) {
