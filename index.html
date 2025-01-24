@@ -8,51 +8,74 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
 
-  <body>
+  <body
+    style="display: flex; flex-direction: column; max-width: 200px; gap: 8px"
+  >
     <h1>Impressora maluca (abra o console)</h1>
+
+    <label for="nome_participante">Nome do Participante:</label>
+    <input type="text" id="nome_participante" placeholder="Digite o nome" />
+
+    <label for="empresa">Empresa:</label>
+    <input type="text" id="empresa" placeholder="Digite a empresa" />
+
+    <label for="template_path">Caminho do Template:</label>
+    <input
+      type="text"
+      id="template_path"
+      value="C:/Users/AnaMariadeLucca/Downloads/teste.lbx"
+    />
     <button>Imprimir</button>
     <button id="list">Listar Impressoras</button>
     <p id="status">Aguardando impressão</p>
+
+    <script type="module">
+      const printersButton = document.querySelector("button");
+      const status = document.querySelector("#status");
+      const list = document.querySelector("#list");
+      const nomeInput = document.querySelector("#nome_participante");
+      const empresaInput = document.querySelector("#empresa");
+      const templatePathInput = document.querySelector("#template_path");
+
+      import BrotherSdk from "https://cdn.jsdelivr.net/npm/bpac-js@latest/dist/index.js";
+      const tag = new BrotherSdk({
+        templatePath: templatePathInput.value,
+        exportPath: "",
+        printer: "Brother QL-820NWB (Copiar 1)",
+      });
+
+      const getPrinters = async () => {
+        try {
+          const printers = await BrotherSdk.getPrinterList();
+          status.innerText = JSON.stringify(printers);
+          console.log({ printers });
+        } catch (error) {
+          status.innerText = `ERROR: ${error}\n\nPara mais informações olhe o console`;
+          console.log({ error });
+        }
+      };
+
+      const print = async () => {
+        status.innerText = "";
+        try {
+          const data = {
+            nome_participante: nomeInput.value,
+            empresa: empresaInput.value,
+          };
+          status.innerText = "Imprimindo";
+          const printers = await tag.print(data, {
+            printName: "Ingresso maluco",
+          });
+          console.log({ printers });
+          status.innerText = "Impressão concluída";
+        } catch (error) {
+          status.innerText = `ERROR: ${error}\n\nPara mais informações olhe o console`;
+          console.log({ error });
+        }
+      };
+
+      printersButton.addEventListener("click", print);
+      list.addEventListener("click", getPrinters);
+    </script>
   </body>
-  <script type="module">
-    const printersButton = document.querySelector("button");
-    const status = document.querySelector("#status");
-    const list = document.querySelector("#list");
-    import BrotherSdk from "https://cdn.jsdelivr.net/npm/bpac-js@latest/dist/index.js";
-    const tag = new BrotherSdk({
-      templatePath: "C:/Users/AnaMariadeLucca/Downloads/teste.lbx",
-      exportPath: "",
-      printer: "Brother QL-820NWB (Copiar 1)",
-    });
-    const data = {
-      nome_participante: "Ana",
-      empresa: "Pecegitos",
-    };
-    const getPrinters = async () => {
-      try {
-        const printers = await BrotherSdk.getPrinterList();
-        status.innerText = JSON.stringify(printers);
-        console.log({ printers }); // Output: {printers: ["Brother QL-820NWB", "Brother PT-9800PCN"]}
-      } catch (error) {
-        status.innerText = `ERROR: ${error}\n\nPara mais informações olhe o console`;
-        console.log({ error });
-      }
-    };
-    const print = async () => {
-      status.innerText = "";
-      try {
-        status.innerText = "Imprimindo";
-        const printers = await tag.print(data, {
-          printName: "Ingresso maluco",
-        });
-        console.log({ printers });
-        status.innerText = "Impressão concluída";
-      } catch (error) {
-        status.innerText = `ERROR: ${error}\n\nPara mais informações olhe o console`;
-        console.log({ error });
-      }
-    };
-    printersButton.addEventListener("click", print);
-    list.addEventListener("click", getPrinters);
-  </script>
 </html>
